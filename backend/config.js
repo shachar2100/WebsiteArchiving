@@ -10,7 +10,7 @@ const CRAWL_CONFIG = {
     MAX_CONCURRENT_REQUESTS: 5,
     
     // Maximum depth for recursive crawling
-    MAX_CRAWL_DEPTH: 3,
+    MAX_CRAWL_DEPTH: 1,
     
    
 };

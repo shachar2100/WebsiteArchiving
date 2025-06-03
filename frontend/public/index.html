@@ -1,63 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Archiving</title>
-    <link rel="stylesheet" href="styles.css">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Website Archiving System" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Add cache control meta tags -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Website Archiving</h1>
-        </header>
-        
-        <main>
-            <div class="search-container">
-                <form id="archiveForm">
-                    <div class="input-group">
-                        <input 
-                            type="url" 
-                            id="urlInput" 
-                            placeholder="Enter website URL (e.g., https://example.com)"
-                            required
-                        >
-                        <button type="submit">
-                            <i class="fas fa-archive"></i> Archive
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="results-container">
-                <div id="loading" class="hidden">
-                    <div class="spinner"></div>
-                    <p>Archiving website...</p>
-                </div>
-
-                <div id="error" class="hidden">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <p id="errorMessage"></p>
-                </div>
-
-                <div id="history" class="hidden">
-                    <h2>Archive History</h2>
-                    <div id="timestamps" class="timestamps-grid"></div>
-                </div>
-
-                <div id="noHistory" class="hidden">
-                    <i class="fas fa-history"></i>
-                    <p>No archive history found for this website.</p>
-                </div>
-            </div>
-        </main>
-    </div>
-    <!-- Load script with cache busting -->
-    <script src="script.js?v=3"></script>
-</body>
+    <title>Website Archiving</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
 </html>
