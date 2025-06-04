@@ -46,6 +46,27 @@ WebsiteArchiving/
 
 ---
 
+## How the Frontend and Backend Communicate
+
+The frontend (React app) and backend (Node.js/Express) communicate via HTTP requests. The frontend sends requests to archive, list, and view websites. The backend processes these requests, manages the archives, and sends data or files back to the frontend.
+
+```
+[User's Browser: React Frontend]
+        |
+        |  (HTTP requests: fetch, archive, list, etc.)
+        v
+[Node.js/Express Backend API]
+        |
+        |  (Reads/writes files, fetches websites)
+        v
+[File Storage: backend/archives/]
+```
+
+- The frontend sends HTTP requests to the backend to archive, list, and view websites.
+- The backend processes these requests, manages the archives, and serves data or files back to the frontend.
+
+---
+
 ## Quick Start
 
 ### 1. Clone the Repository
@@ -102,6 +123,17 @@ npm start
 - Percent difference calculation between snapshots
 - Multiple archives per day supported
 - Clean, modern UI
+
+---
+## Visual Tour: Key Features in Action
+![Frontpage View](images/frontpage.png)
+*Archives that exsist are shown in alphabetical order you can also search them*
+
+![Archive View](images/google.png)
+*Once you click on a specific archive this is the webpage that opens up.*
+
+![Diff View](images/google-specificdate.png)
+*Comparing changes between two snapshots and what happens when you click on a date.*
 
 ---
 
