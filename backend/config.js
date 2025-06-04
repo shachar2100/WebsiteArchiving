@@ -15,7 +15,11 @@ const CRAWL_CONFIG = {
    
 };
 
+// Auto-archive interval (in milliseconds)
+const AUTO_ARCHIVE_INTERVAL_MS = 12 * 60 * 60 * 1000; // 12 hours
+
 // Export the configuration
 module.exports = {
-    CRAWL_CONFIG
+    CRAWL_CONFIG,
+    AUTO_ARCHIVE_INTERVAL_MS
 };

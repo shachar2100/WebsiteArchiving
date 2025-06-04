@@ -1,7 +1,8 @@
-// backend/src/services/fileStorageService.js
 const fs = require('fs/promises');
 const path = require('path');
 const { URL } = require('url');
+const Diff = require('diff');
+const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 class FileStorageService {
     constructor() {
@@ -55,12 +56,11 @@ class FileStorageService {
     /**
          * Gets all archives for a specific domain.
          * @param {string} domain - The domain to get archives for.
-         * @returns {Promise<Array<{timestamp: number, path: string}>>} Array of archive information.
+         * @returns {Promise<Array<{timestamp: number, path: string, changed?: boolean}>>} Array of archive information.
          */
     async getArchivesForDomain(domain) {
         try {
             const domainPath = path.join(this.archivesBaseDir, domain);
-            
             // Check if domain directory exists
             try {
                 await fs.access(domainPath);
@@ -68,11 +68,9 @@ class FileStorageService {
                 // If directory doesn't exist, return empty array
                 return [];
             }
-
             // Get all timestamp directories
             const entries = await fs.readdir(domainPath, { withFileTypes: true });
             const archives = [];
-
             // Process each timestamp directory
             for (const entry of entries) {
                 if (entry.isDirectory()) {
@@ -85,8 +83,38 @@ class FileStorageService {
                     }
                 }
             }
-
-            // Sort archives by timestamp (newest first)
+            // Sort archives by timestamp (oldest first for comparison)
+            archives.sort((a, b) => a.timestamp - b.timestamp);
+            // Read contents for each archive's main file (index/index.html)
+            const contents = [];
+            for (const archive of archives) {
+                const mainFilePath = path.join(this.archivesBaseDir, archive.path, 'index', 'index.html');
+                try {
+                    const content = await fs.readFile(mainFilePath, 'utf8');
+                    contents.push(content);
+                } catch (err) {
+                    contents.push(null);
+                }
+            }
+            // Add percentDifference property
+            for (let i = 0; i < archives.length; i++) {
+                if (i === 0 || !contents[i] || !contents[i-1]) {
+                    archives[i].percentDifference = 0;
+                } else {
+                    const diff = Diff.diffWords(contents[i-1], contents[i]);
+                    let total = 0, changed = 0;
+                    diff.forEach(part => {
+                        total += part.value.length;
+                        if (part.added || part.removed) changed += part.value.length;
+                    });
+                    archives[i].percentDifference = total === 0 ? 0 : (changed / total) * 100;
+                }
+            }
+            // Add 'changed' property: true if percentDifference > 0
+            for (let i = 0; i < archives.length; i++) {
+                archives[i].changed = archives[i].percentDifference > 0;
+            }
+            // Return sorted by newest first (as before)
             return archives.sort((a, b) => b.timestamp - a.timestamp);
         } catch (error) {
             console.error(`Error getting archives for domain ${domain}:`, error);
@@ -120,5 +148,40 @@ class FileStorageService {
             throw error;
         }
     }
+
+    /**
+     * Gets all domains in the archives directory.
+     * @returns {Promise<Array<string>>} Array of domain names.
+     */
+    async getAllDomains() {
+        try {
+            const entries = await fs.readdir(this.archivesBaseDir, { withFileTypes: true });
+            console.log('entries:', entries);
+            return entries
+                .filter(entry => entry.isDirectory())
+                .map(entry => entry.name)
+                .sort((a, b) => a.localeCompare(b));
+        } catch (err) {
+            // If the directory doesn't exist, return an empty array
+            if (err.code === 'ENOENT') return [];
+            throw err;
+        }
+    }
 }
+// /**
+//  * Gets the color of the difference between two versions of a website.
+//  * @param {number} percent - The percentage of the difference.
+//  * @returns {string} The color of the difference.
+//  */
+// function getDiffColor(percent) {
+//     if (percent === 0) return '#d6d6d6'; // gray
+//     if (percent <= 20) return '#f6e58d'; // yellow
+//     if (percent <= 50) return '#badc58'; // light green
+//     if (percent <= 80) return '#6ab04c'; // green
+//     return '#30336b'; // blue
+// }
+
+
+
+
 module.exports = new FileStorageService();

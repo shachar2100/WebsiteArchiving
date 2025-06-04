@@ -9,10 +9,8 @@ const fileStorageService = require('./fileStorageService');
 const { normalizeUrl, getBaseUrl, isSameDomain, resolveUrl } = require('../utils/urlUtils');
 const { rewriteHtmlUrls } = require('../utils/htmlRewriter');
 
-// Set a reasonable concurrency limit to avoid overwhelming the target server
-const MAX_CONCURRENT_REQUESTS = 5;
-// Set a reasonable depth limit for the recursive crawl
-const MAX_CRAWL_DEPTH = 3; // Adjust as needed
+const { CRAWL_CONFIG } = require('../../config');
+const { MAX_CONCURRENT_REQUESTS, MAX_CRAWL_DEPTH } = CRAWL_CONFIG;
 
 class ArchiverService {
     constructor() {
